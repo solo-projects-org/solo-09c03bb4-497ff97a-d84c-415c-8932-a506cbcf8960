@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>清障队 · 已入库倒木记录</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header>
+  <h1>🪓 清障队 · 已入库倒木记录</h1>
+  <p class="net-status">共 {{ records|length }} 笔（仅显示已确认入库的记录）</p>
+</header>
+
+<main>
+  {% if records %}
+  <table class="records-table">
+    <thead>
+      <tr>
+        <th>#</th><th>现场照片</th><th>纬度</th><th>经度</th>
+        <th>备注</th><th>采集时间</th><th>入库时间</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td>{{ r["id"] }}</td>
+        <td>
+          <a href="/photos/{{ r['photo'] }}" target="_blank">
+            <img src="/photos/{{ r['photo'] }}" alt="倒木照片" class="thumb">
+          </a>
+        </td>
+        <td>{{ "%.6f"|format(r["lat"]) }}</td>
+        <td>{{ "%.6f"|format(r["lng"]) }}</td>
+        <td>{{ r["note"] }}</td>
+        <td>{{ r["created_at"][:19].replace("T", " ") }}</td>
+        <td>{{ r["uploaded_at"][:19].replace("T", " ") }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty">暂无已入库记录。</p>
+  {% endif %}
+  <p class="footer-link"><a href="/">← 返回采集页</a></p>
+</main>
+</body>
+</html>

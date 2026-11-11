@@ -1,0 +1,93 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  background: #f0f4ec;
+  color: #243018;
+  line-height: 1.6;
+}
+
+header {
+  background: #2d5a27;
+  color: #fff;
+  padding: 16px 20px;
+}
+header h1 { font-size: 1.25rem; }
+
+.net-status { font-size: .85rem; margin-top: 4px; opacity: .95; }
+.net-status.online  { color: #b9f6a5; }
+.net-status.offline { color: #ffd0a8; }
+
+main { max-width: 720px; margin: 0 auto; padding: 16px; }
+
+.card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.08);
+}
+.card h2 { font-size: 1.05rem; margin-bottom: 12px; }
+
+label { display: block; margin: 10px 0 4px; font-size: .9rem; font-weight: 600; }
+input, textarea {
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid #c4cdb8;
+  border-radius: 6px;
+  font-size: 1rem;
+  margin-top: 4px;
+  background: #fbfdfa;
+}
+.row { display: flex; gap: 12px; }
+.row label { flex: 1; }
+
+.btn {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  padding: 11px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+.btn.primary   { background: #2d5a27; color: #fff; }
+.btn.primary:active { background: #23491e; }
+.btn.secondary { background: #e4ecdc; color: #2d5a27; }
+
+.hint { font-size: .8rem; color: #6b7a5e; margin-top: 8px; }
+.preview { width: 100%; border-radius: 8px; margin-top: 12px; }
+
+.pending-list { list-style: none; }
+.pending-item {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px dashed #d5ddc9;
+}
+.thumb {
+  width: 84px; height: 84px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.records-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  font-size: .88rem;
+}
+.records-table th, .records-table td {
+  border: 1px solid #dde5d2;
+  padding: 8px;
+  text-align: left;
+  vertical-align: middle;
+}
+.records-table th { background: #e8efe0; }
+.empty { padding: 24px; text-align: center; color: #6b7a5e; }
+
+.footer-link { text-align: center; margin: 18px 0 30px; font-size: .9rem; }
+.footer-link a { color: #2d5a27; }

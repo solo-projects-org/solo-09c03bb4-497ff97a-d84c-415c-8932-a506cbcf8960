@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2d5a27">
+<title>林道巡护 · 倒木采集</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header>
+  <h1>🌲 林道巡护 · 倒木采集</h1>
+  <p class="net-status" id="netStatus">检测网络中…</p>
+</header>
+
+<main>
+  <section class="card">
+    <h2>新增倒木记录</h2>
+    <form id="collectForm" onsubmit="return false;">
+      <div class="row">
+        <label>纬度
+          <input type="number" id="lat" step="any" min="-90" max="90"
+                 placeholder="例：47.7350" required>
+        </label>
+        <label>经度
+          <input type="number" id="lng" step="any" min="-180" max="180"
+                 placeholder="例：128.9120" required>
+        </label>
+      </div>
+      <button type="button" id="geoBtn" class="btn secondary">📍 获取当前定位</button>
+
+      <label>备注（可选）
+        <textarea id="note" rows="2" maxlength="500"
+                  placeholder="例：K12+300 处倒木横卧路面，胸径约 40cm"></textarea>
+      </label>
+
+      <label>现场照片
+        <input type="file" id="photo" accept="image/*" capture="environment">
+      </label>
+      <button type="button" id="sampleBtn" class="btn secondary">🖼️ 使用随附样例照片</button>
+      <img id="preview" class="preview" alt="照片预览" hidden>
+
+      <button type="submit" id="saveBtn" class="btn primary">💾 保存到待传记录</button>
+      <p class="hint">无信号也可保存：记录与照片存在本机浏览器，回网后再补传。</p>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>待传记录（<span id="pendingCount">0</span>）</h2>
+    <ul id="pendingList" class="pending-list"></ul>
+    <button id="syncBtn" class="btn primary">📤 补传全部待传记录</button>
+    <p id="syncStatus" class="hint"></p>
+  </section>
+
+  <p class="footer-link">清障队请前往 <a href="/records">已入库记录查看页</a>（需联网）</p>
+</main>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

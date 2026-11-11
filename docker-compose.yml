@@ -1,0 +1,11 @@
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - patrol-data:/data   # SQLite 与已入库原照持久化
+    restart: unless-stopped
+
+volumes:
+  patrol-data:
