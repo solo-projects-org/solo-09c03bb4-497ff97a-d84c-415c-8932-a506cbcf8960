@@ -74,6 +74,76 @@ input, textarea {
   flex-shrink: 0;
 }
 
+select {
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid #c4cdb8;
+  border-radius: 6px;
+  font-size: .95rem;
+  margin-top: 4px;
+  background: #fbfdfa;
+}
+
+.verdict-row { display: flex; gap: 20px; margin-top: 12px; }
+.verdict-row .radio {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-weight: 600;
+}
+.verdict-row input[type="radio"] { width: auto; margin: 0; }
+
+.hint.error { color: #b3382c; font-weight: 600; }
+
+/* 清障页：按棵分组卡片（可展开/收起） */
+.group-card { padding: 0; overflow: hidden; }
+.group-card summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 13px 18px;
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+}
+.group-card summary::-webkit-details-marker { display: none; }
+.group-card summary::before { content: "▸"; color: #2d5a27; }
+.group-card[open] summary::before { content: "▾"; }
+.group-card .records-table { border-top: 2px solid #dde5d2; }
+
+.tag {
+  background: #e4ecdc;
+  color: #2d5a27;
+  border-radius: 10px;
+  padding: 1px 10px;
+  font-size: .78rem;
+}
+.tag.muted { background: #eef1e8; color: #6b7a5e; }
+.group-ids { font-size: .82rem; color: #6b7a5e; font-weight: 400; }
+
+.verdict {
+  border-radius: 10px;
+  padding: 1px 10px;
+  font-size: .82rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.verdict.same      { background: #dff0d8; color: #2d5a27; }
+.verdict.different { background: #f6e3d5; color: #8a4b1f; }
+
+.revoke-btn {
+  border: 1px solid #c4cdb8;
+  background: #fff;
+  color: #8a2f2f;
+  border-radius: 6px;
+  padding: 4px 12px;
+  font-size: .85rem;
+  cursor: pointer;
+}
+.revoke-btn:hover { background: #f9efef; }
+
 .records-table {
   width: 100%;
   border-collapse: collapse;

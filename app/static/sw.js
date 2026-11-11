@@ -1,7 +1,7 @@
 /* Service Worker：首次在线打开后缓存应用外壳，断网刷新仍可采集 */
 "use strict";
 
-const CACHE = "forest-patrol-v1";
+const CACHE = "forest-patrol-v2";
 const SHELL = [
   "/",
   "/static/app.js",

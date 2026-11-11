@@ -3,46 +3,171 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>清障队 · 已入库倒木记录</title>
+<title>清障队 · 倒木清点（按棵）</title>
 <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 <header>
-  <h1>🪓 清障队 · 已入库倒木记录</h1>
-  <p class="net-status">共 {{ records|length }} 笔（仅显示已确认入库的记录）</p>
+  <h1>🪓 清障队 · 倒木清点</h1>
+  <p class="net-status">
+    共 {{ records|length }} 笔入库记录，核定为 {{ groups|length }} 棵倒木
+    （经「同一棵」核定间接相连的记录自动归为一棵）
+  </p>
 </header>
 
 <main>
-  {% if records %}
-  <table class="records-table">
-    <thead>
-      <tr>
-        <th>#</th><th>现场照片</th><th>纬度</th><th>经度</th>
-        <th>备注</th><th>采集时间</th><th>入库时间</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for r in records %}
-      <tr>
-        <td>{{ r["id"] }}</td>
-        <td>
-          <a href="/photos/{{ r['photo'] }}" target="_blank">
-            <img src="/photos/{{ r['photo'] }}" alt="倒木照片" class="thumb">
-          </a>
-        </td>
-        <td>{{ "%.6f"|format(r["lat"]) }}</td>
-        <td>{{ "%.6f"|format(r["lng"]) }}</td>
-        <td>{{ r["note"] }}</td>
-        <td>{{ r["created_at"][:19].replace("T", " ") }}</td>
-        <td>{{ r["uploaded_at"][:19].replace("T", " ") }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <section class="card">
+    <h2>同树核定</h2>
+    {% if records|length >= 2 %}
+    <p class="hint">选两笔已入库记录，核定是否同一棵倒木。与已有核定矛盾时将被拒绝，并指出冲突的记录编号。</p>
+    <div class="row">
+      <label>记录 A
+        <select id="recA">
+          {% for r in records %}
+          <option value="{{ r['id'] }}">#{{ r['id'] }} · {{ "%.4f"|format(r['lat']) }}, {{ "%.4f"|format(r['lng']) }}{% if r['note'] %} · {{ r['note'][:24] }}{% endif %}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>记录 B
+        <select id="recB">
+          {% for r in records %}
+          <option value="{{ r['id'] }}"{% if loop.index == 2 %} selected{% endif %}>#{{ r['id'] }} · {{ "%.4f"|format(r['lat']) }}, {{ "%.4f"|format(r['lng']) }}{% if r['note'] %} · {{ r['note'][:24] }}{% endif %}</option>
+          {% endfor %}
+        </select>
+      </label>
+    </div>
+    <div class="verdict-row">
+      <label class="radio"><input type="radio" name="verdict" value="same" checked> 🌳 同一棵</label>
+      <label class="radio"><input type="radio" name="verdict" value="different"> 🌲🌲 不同棵</label>
+    </div>
+    <button id="judgeBtn" class="btn primary">✅ 提交核定</button>
+    <p id="judgeMsg" class="hint"></p>
+    {% else %}
+    <p class="hint">至少入库两笔记录后才能核定。请先到<a href="/">采集页</a>补传记录。</p>
+    {% endif %}
+  </section>
+
+  {% if groups %}
+    {% for grp in groups %}
+    <details class="card group-card" open>
+      <summary>
+        <span class="group-title">🌳 第 {{ loop.index }} 棵</span>
+        <span class="tag">{{ grp|length }} 笔记录</span>
+        {% if grp|length == 1 %}<span class="tag muted">未归并</span>{% endif %}
+        <span class="group-ids">记录{% for r in grp %} #{{ r['id'] }}{% endfor %}</span>
+      </summary>
+      <table class="records-table">
+        <thead>
+          <tr>
+            <th>#</th><th>现场照片</th><th>纬度</th><th>经度</th>
+            <th>备注</th><th>采集时间</th><th>入库时间</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in grp %}
+          <tr>
+            <td>{{ r["id"] }}</td>
+            <td>
+              <a href="/photos/{{ r['photo'] }}" target="_blank">
+                <img src="/photos/{{ r['photo'] }}" alt="倒木照片" class="thumb">
+              </a>
+            </td>
+            <td>{{ "%.6f"|format(r["lat"]) }}</td>
+            <td>{{ "%.6f"|format(r["lng"]) }}</td>
+            <td>{{ r["note"] }}</td>
+            <td>{{ r["created_at"][:19].replace("T", " ") }}</td>
+            <td>{{ r["uploaded_at"][:19].replace("T", " ") }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </details>
+    {% endfor %}
   {% else %}
   <p class="empty">暂无已入库记录。</p>
   {% endif %}
+
+  <section class="card">
+    <h2>核定记录（{{ judgments|length }}）</h2>
+    {% if judgments %}
+    <table class="records-table">
+      <thead>
+        <tr><th>#</th><th>记录对</th><th>结论</th><th>核定时间</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for j in judgments %}
+        <tr>
+          <td>{{ j["id"] }}</td>
+          <td>记录 #{{ j["record_a"] }} ↔ 记录 #{{ j["record_b"] }}</td>
+          <td><span class="verdict {{ j['verdict'] }}">{{ "同一棵" if j["verdict"] == "same" else "不同棵" }}</span></td>
+          <td>{{ j["created_at"][:19].replace("T", " ") }}</td>
+          <td><button class="revoke-btn" data-jid="{{ j['id'] }}">撤销</button></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <p class="hint">撤销后按剩余核定自动重新分组；原始巡护记录与照片始终保留。</p>
+    {% else %}
+    <p class="hint">暂无核定。在上方选择两笔记录提交核定后，可在这里撤销。</p>
+    {% endif %}
+  </section>
+
   <p class="footer-link"><a href="/">← 返回采集页</a></p>
 </main>
+
+<script>
+"use strict";
+const judgeMsg = document.getElementById("judgeMsg");
+
+function showMsg(text, isError) {
+  if (!judgeMsg) return;
+  judgeMsg.textContent = text;
+  judgeMsg.classList.toggle("error", !!isError);
+}
+
+const judgeBtn = document.getElementById("judgeBtn");
+if (judgeBtn) {
+  judgeBtn.addEventListener("click", async () => {
+    const a = Number(document.getElementById("recA").value);
+    const b = Number(document.getElementById("recB").value);
+    const verdict = document.querySelector("input[name=verdict]:checked").value;
+    if (a === b) { showMsg("请选择两笔不同的记录。", true); return; }
+    judgeBtn.disabled = true;
+    try {
+      const resp = await fetch("/api/judgments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ a, b, verdict }),
+      });
+      const data = await resp.json();
+      if (resp.ok && data.ok) {
+        location.reload();          // 分组由全部现存核定现算，刷新即最新
+      } else if (resp.status === 409) {
+        showMsg("❌ 提交被拒绝：" + data.error, true);   // 冲突，未写入
+      } else {
+        showMsg("❌ " + (data.error || "提交失败"), true);
+      }
+    } catch (e) {
+      showMsg("❌ 网络错误：" + e.message, true);
+    } finally {
+      judgeBtn.disabled = false;
+    }
+  });
+}
+
+document.querySelectorAll(".revoke-btn").forEach(btn => {
+  btn.addEventListener("click", async () => {
+    if (!confirm("撤销这条核定？分组将按剩余核定重新计算。")) return;
+    const resp = await fetch("/api/judgments/" + btn.dataset.jid,
+                             { method: "DELETE" });
+    if (resp.ok) {
+      location.reload();
+    } else {
+      const data = await resp.json().catch(() => ({}));
+      alert("撤销失败：" + (data.error || resp.status));
+    }
+  });
+});
+</script>
 </body>
 </html>
